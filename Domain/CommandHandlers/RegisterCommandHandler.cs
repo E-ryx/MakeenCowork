@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Domain.CommandHandlers
 {
-    public class RegisterCommandHandler: IRequest<RegisterCommand>
+    public class RegisterCommandHandler: IRequestHandler<RegisterCommand, bool>
     {
         private readonly IUserService _userService;
 
@@ -18,9 +18,9 @@ namespace Domain.CommandHandlers
             _userService = userService;
         }
 
-        public async Task Handle(RegisterCommand request, CancellationToken et)
+        public async Task<bool> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-           await _userService.RegisterAsync(request);
+            return await _userService.RegisterAsync(request);
         }
     }
 }

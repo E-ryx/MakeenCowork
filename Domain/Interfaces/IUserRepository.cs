@@ -4,5 +4,6 @@ namespace Domain.Interfaces;
 
 public interface IUserRepository
 {
-    Task Register(RegisterCommand command);
+    Task CreateUserAsync(RegisterCommand command);
+    Task<bool> PhoneNumberExistsAsync(string phoneNumber);
 }

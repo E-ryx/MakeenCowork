@@ -9,6 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IUserService
     {
-        Task RegisterAsync(RegisterCommand command);
+        Task<bool> RegisterAsync(RegisterCommand command);
     }
 }

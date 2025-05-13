@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Domain.Command;
 
-public class RegisterCommand: IRequest
+public class RegisterCommand: IRequest<bool>
 {
     public string? Email{ get; set; }
     public string Name{ get; set; }
@@ -13,7 +13,5 @@ public class RegisterCommand: IRequest
     public DateTime BirthDate { get; set; }
     public IFormFile ImgOfNationalCard { get; set; }
     public string PhoneNumber { get; set; }
-    public string VerifyCode { get; set; }
-    public string Captcha { get; set; }
-
+    public string OtpResponse { get; set; }
 }

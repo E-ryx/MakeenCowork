@@ -2,6 +2,7 @@
 using Domain.Command;
 using Domain.Interfaces;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories;
 
@@ -15,7 +16,7 @@ public class UserRepository: IUserRepository
     }
     #endregion
 
-    public async Task Register(RegisterCommand command)
+    public async Task CreateUserAsync(RegisterCommand command)
     {
         var user = new User
         {
@@ -31,5 +32,8 @@ public class UserRepository: IUserRepository
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
     }
-
+    public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
+    {
+        return await _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber);
+    }
 }
