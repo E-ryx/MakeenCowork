@@ -1,0 +1,65 @@
+using Data.Context;
+using Data.Repositories;
+using Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+});
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<IUserRepository>()
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<UserRepository>()
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+
+#region Config DataBase
+builder.Services.AddDbContext<MyDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CoWork"));
+});
+#endregion
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
