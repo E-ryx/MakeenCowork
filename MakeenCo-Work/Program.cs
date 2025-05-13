@@ -1,12 +1,18 @@
 using Data.Context;
 using Data.Repositories;
+using Domain.Command;
 using Domain.Interfaces;
+using Domain.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<ICaptchaService, CaptchaService>();
+builder.Services.AddScoped<IMemoryService, MemoryService>();
+builder.Services.AddScoped<IOtpService, OtpService>();
+// builder.Services.AddScoped<ISeeder, UserSeeder>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -39,6 +45,13 @@ builder.Services.Scan(scan => scan
     .AsImplementedInterfaces()
     .WithScopedLifetime());
 
+// Add Services for MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(GenerateCaptchaCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(SendOtpCommand).Assembly));
 
 #region Config DataBase
 builder.Services.AddDbContext<MyDbContext>(options =>
