@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Domain.Enums.EnumCollection;
 
 namespace MakeenCo_Work.Controllers
 {
@@ -37,6 +38,40 @@ namespace MakeenCo_Work.Controllers
         {
             var otp = await _mediator.Send(command);
             return Ok(otp);
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromQuery] LoginCommand command)
+        {
+            var res = await _mediator.Send(command);
+                switch (res)
+                {
+                    case LoginResult.NotFound:
+                        ModelState.AddModelError("Email", "کاربری با مشخصات وارد شده یافت نشد");
+                        break;
+                    case LoginResult.NotActive:
+                        ModelState.AddModelError("Email", "کاربر مورد نظر فعال نشده است");
+                        break;
+                    case LoginResult.WrongPassword:
+                        ModelState.AddModelError("Email", "کاربری با مشخصات وارد شده یافت نشد");
+                        break;
+                    case LoginResult.Succeeded:
+                        List<Claim> claims = new List<Claim>()
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                        };
+
+                        ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+
+                        await HttpContext.SignInAsync(principal, new AuthenticationProperties()
+                        {
+                            IsPersistent = viewModel.RememberMe
+                        });
+                        TempData["SuccessMessage"] = "خوش آمدید";
+                        return RedirectToAction("Index", "Home");
+        }
         }
 
     }
