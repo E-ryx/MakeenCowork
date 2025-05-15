@@ -9,10 +9,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ICaptchaService, CaptchaService>();
-builder.Services.AddScoped<IMemoryService, MemoryService>();
-builder.Services.AddScoped<IOtpService, OtpService>();
+//builder.Services.AddScoped<ICaptchaService, CaptchaService>();
+//builder.Services.AddScoped<IMemoryService, MemoryService>();
+//builder.Services.AddScoped<IOtpService, OtpService>();
 // builder.Services.AddScoped<ISeeder, UserSeeder>();
+
+// Memory cache services
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -33,6 +36,14 @@ builder.Services.AddAuthentication(options =>
     options.SlidingExpiration = true;
 });
 
+// Add Services for MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(GenerateCaptchaCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(SendOtpCommand).Assembly));
+
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<IUserRepository>()
     .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
@@ -45,13 +56,17 @@ builder.Services.Scan(scan => scan
     .AsImplementedInterfaces()
     .WithScopedLifetime());
 
-// Add Services for MediatR
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(GenerateCaptchaCommand).Assembly));
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(SendOtpCommand).Assembly));
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<UserService>()
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<IUserService>()
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 
 #region Config DataBase
 builder.Services.AddDbContext<MyDbContext>(options =>

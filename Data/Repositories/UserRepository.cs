@@ -32,8 +32,16 @@ public class UserRepository: IUserRepository
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
     }
+    public async Task<User> GetUserAsync(string phoneNumber)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber );
+    }
     public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
     {
         return await _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber);
+    }
+    public async Task<User> GetUserAsync(int id)
+    {
+        return await _context.Users.FindAsync(id);
     }
 }

@@ -1,5 +1,9 @@
-﻿using Domain.Command;
+﻿using System.Security.Claims;
+using Domain.Command;
+using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static Domain.Enums.EnumCollection;
@@ -11,11 +15,12 @@ namespace MakeenCo_Work.Controllers
     public class AuthenticationsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public AuthenticationsController(IMediator mediator)
+        private readonly IUserRepository _userRepository;
+        public AuthenticationsController(IMediator mediator, IUserRepository userRepository)
         {
             _mediator = mediator;
+            _userRepository = userRepository;
         }
-
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterCommand command)
@@ -43,36 +48,21 @@ namespace MakeenCo_Work.Controllers
         public async Task<IActionResult> Login([FromQuery] LoginCommand command)
         {
             var res = await _mediator.Send(command);
-                switch (res)
-                {
-                    case LoginResult.NotFound:
-                        ModelState.AddModelError("Email", "کاربری با مشخصات وارد شده یافت نشد");
-                        break;
-                    case LoginResult.NotActive:
-                        ModelState.AddModelError("Email", "کاربر مورد نظر فعال نشده است");
-                        break;
-                    case LoginResult.WrongPassword:
-                        ModelState.AddModelError("Email", "کاربری با مشخصات وارد شده یافت نشد");
-                        break;
-                    case LoginResult.Succeeded:
-                        List<Claim> claims = new List<Claim>()
-                        {
-                            new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
-                            new Claim(ClaimTypes.Email, user.Email),
-                        };
+            if (res == LoginResult.NotFound)
+                    return NotFound("User Not Found");
+            if (res == LoginResult.WrongOtp)
+                    return BadRequest("Wrong Otp");
+            var user = await _userRepository.GetUserAsync(command.PhoneNumber);
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
 
-                        ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        ClaimsPrincipal principal = new ClaimsPrincipal(identity);
-
-                        await HttpContext.SignInAsync(principal, new AuthenticationProperties()
-                        {
-                            IsPersistent = viewModel.RememberMe
-                        });
-                        TempData["SuccessMessage"] = "خوش آمدید";
-                        return RedirectToAction("Index", "Home");
+            ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(principal, new AuthenticationProperties());
+            return Ok("User Logged In");
         }
-        }
-
     }
+
 }

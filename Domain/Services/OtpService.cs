@@ -21,7 +21,7 @@ namespace Domain.Services
         public bool ValidateOtp(string phoneNumber, string otpResponse)
         {
             var otp = _memoryService.GetAsync(phoneNumber);
-            return otp.ToString() == otpResponse;
+            return otp.Result.ToString() == otpResponse;
         }
     }
 }
