@@ -63,6 +63,15 @@ namespace MakeenCo_Work.Controllers
             await HttpContext.SignInAsync(principal, new AuthenticationProperties());
             return Ok("User Logged In");
         }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok();
+        }
+
+
     }
 
 }
