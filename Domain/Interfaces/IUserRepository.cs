@@ -9,4 +9,5 @@ public interface IUserRepository
     Task<User> GetUserAsync(string phoneNumber);
     Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task<User> GetUserAsync(int id);
+    Task<List<Reservation>> GetUserCurrentReservations(int userId, Reservation.ReservationState reservationsState);
 }

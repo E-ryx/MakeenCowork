@@ -44,4 +44,14 @@ public class UserRepository: IUserRepository
     {
         return await _context.Users.FindAsync(id);
     }
+
+    public async Task<List<Reservation>> GetUserCurrentReservations(int userId, Reservation.ReservationState reservationsState)
+    {
+        return await _context.Reservations
+            .AsNoTracking()
+            .Include(r => r.Days)
+            .Include(r => r.Space)
+            .Where(r => r.UserId == userId && r.State == reservationsState)
+            .ToListAsync();    
+    }
 }

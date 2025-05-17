@@ -8,6 +8,7 @@ using System.Text;
 using Domain.DTOs;
 using Domain.Interfaces;
     using Domain.Models;
+    using Domain.Queries;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Http;
@@ -61,5 +62,21 @@ using static Domain.Enums.EnumCollection;
                 Gender = user.Gender
             };
         }
+        public async Task<List<UserCurrentReservationDto>> GetUserCurrentReservationsAsync(int userId, Reservation.ReservationState reservationsState)
+        {
+            var reservations = await _userRepository.GetUserCurrentReservations(userId, reservationsState);
+            var currentReservations = new List<UserCurrentReservationDto>();
+            foreach (var item in reservations)
+            {
+                 currentReservations.Add( new UserCurrentReservationDto
+                                                         {
+                                                             DaysNumber = item.Days.Count,
+                                                             SpaceName = item.Space.Name,
+                                                             SubmitDate = item.CreatedAt
+                                                         });
+            }
+
+            return currentReservations;
+        }
     }
-}
+    }

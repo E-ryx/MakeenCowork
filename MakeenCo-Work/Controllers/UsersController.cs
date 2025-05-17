@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using Domain.Models;
+using Domain.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +37,65 @@ namespace MakeenCo_Work.Controllers
                 return NotFound("User Not Found");
 
             return Ok(user);
+        }
+
+        [HttpGet("reservations/current")]
+        public async Task<IActionResult> GetUserCurrentReservations()
+        {
+            
+            // Get the user's ID from the claims
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            // Parse the ID (if stored as a string)
+            if (!int.TryParse(userId, out var userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var query = new GetUserReservationsQuery
+            {
+                UserId = userId
+            };
+
+            var currentReservations = await _mediator.Send(query);
+            if (currentReservations.Count == 0)
+                return NotFound("Reservations not Found");
+            return Ok(currentReservations);
+        }
+        
+        [HttpGet("reservations/{state}")]
+        public async Task<IActionResult> GetUserReservations([FromQuery] Reservation.ReservationState state)
+        {
+            
+            // Get the user's ID from the claims
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            // Parse the ID (if stored as a string)
+            if (!int.TryParse(userId, out var userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var query = new GetUserReservationsQuery
+            {
+                UserId = userId,
+                State = state
+            };
+
+            var reservations = await _mediator.Send(query);
+            if (reservations.Count == 0)
+                return NotFound("Reservations not Found");
+            return Ok(reservations);
         }
     }
 }
