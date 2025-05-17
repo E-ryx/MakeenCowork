@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Models;
 public class Reservation
 {
+    [Key]
     public int ReservationId { get; private set; }
     public int UserId { get; private set; }
     public int SpaceId { get; private set; }
