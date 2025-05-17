@@ -27,12 +27,7 @@ namespace MakeenCo_Work.Controllers
                 return Unauthorized("User not authenticated.");
             }
 
-            // Parse the ID (if stored as a string)
-            if (!int.TryParse(userId, out var userId))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-            var user = await _mediator.Send(userId);
+            var user = await _mediator.Send(int.Parse(userId));
             if (user == null) 
                 return NotFound("User Not Found");
 
@@ -42,17 +37,16 @@ namespace MakeenCo_Work.Controllers
         [HttpGet("reservations/current")]
         public async Task<IActionResult> GetUserCurrentReservations()
         {
-            
             // Get the user's ID from the claims
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
+            if (userIdString == null)
             {
                 return Unauthorized("User not authenticated.");
             }
 
             // Parse the ID (if stored as a string)
-            if (!int.TryParse(userId, out var userId))
+            if (!int.TryParse(userIdString, out var userId))
             {
                 return BadRequest("Invalid user ID format.");
             }
@@ -73,15 +67,15 @@ namespace MakeenCo_Work.Controllers
         {
             
             // Get the user's ID from the claims
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
+            if (userIdString == null)
             {
                 return Unauthorized("User not authenticated.");
             }
 
             // Parse the ID (if stored as a string)
-            if (!int.TryParse(userId, out var userId))
+            if (!int.TryParse(userIdString, out var userId))
             {
                 return BadRequest("Invalid user ID format.");
             }
