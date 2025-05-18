@@ -20,7 +20,7 @@ namespace MakeenCo_Work.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddReser(AddReservationCommand addReservationCommand)
+        public async Task<IActionResult> AddReserve(AddReservationCommand addReservationCommand)
         {
             var UserId = int.Parse(User.Claims.FirstOrDefault().Value);
             addReservationCommand.UserId = UserId;
@@ -32,5 +32,22 @@ namespace MakeenCo_Work.Controllers
 
             return BadRequest();
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> CancleReserve(CancelReserveCommand command)
+        {
+            var UserId = int.Parse(User.Claims.FirstOrDefault().Value);
+            command.UserId = UserId;
+            if (ModelState.IsValid)
+            {
+                await _mediator.Send(command);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+
+
     }
 }

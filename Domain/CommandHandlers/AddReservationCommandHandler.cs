@@ -11,18 +11,19 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
     private readonly IReservationRepository _reservation;
     private readonly ISpaceRepository _spaceRepository;
     private readonly IUserService _userService;
+    private readonly IUserRepository _userRepository;
 
-    public AddReservationCommandHandler(IReservationRepository reservation, ISpaceRepository spaceRepository, IUserService userService)
+    public AddReservationCommandHandler(IReservationRepository reservation, ISpaceRepository spaceRepository, IUserService userService, IUserRepository userRepository)
     {
         _reservation = reservation;
         _spaceRepository = spaceRepository;
         _userService = userService;
+        _userRepository = userRepository;
     }
-
 
     public async Task<string> Handle(AddReservationCommand request, CancellationToken cancellationToken)
     {
-        var UserBalance = await _reservation.GetUserBalance(request.UserId);
+        var UserBalance = await _userRepository.GetUserBalance(request.UserId);
         var SpacePrice = await _spaceRepository.GetPriceOfSpace(request.SpaceId);
         var PriceToPay = request.NumberOfPeople * SpacePrice;
         var CountOfFree = await _spaceRepository.SpaceIsFreeAtDate(request.SpaceId, request.CreatedAt);

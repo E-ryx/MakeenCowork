@@ -60,6 +60,9 @@ public class UserRepository: IUserRepository
         _context.Update(user);
         await _context.SaveChangesAsync();
     }
+    public async Task<double> GetUserBalance(int userid)
+    {
+        return await _context.Users.Where(a => a.Id == userid).Select(a => a.WalletBalance).FirstOrDefaultAsync();
+    }
 
-    
 }

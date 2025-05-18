@@ -10,7 +10,7 @@ public class ReservationDay
     public DateOnly Date { get; private set; }
 
     public int SpaceId{ get; set; }
-
+    public int UserId{ get; set; }
 
 
     // Navigation Property

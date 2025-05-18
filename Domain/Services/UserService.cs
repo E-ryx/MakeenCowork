@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-    using System.Security.Claims;
+using System.Security.Claims;
 using System.Text;
-    using System.Threading.Tasks;
-    using Domain.Command;
+using System.Threading.Tasks;
+using Domain.Command;
 using Domain.DTOs;
 using Domain.Interfaces;
-    using Domain.Models;
-    using Domain.Queries;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Http;
+using Domain.Models;
+using Domain.Queries;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using static Domain.Enums.EnumCollection;
 
-    namespace Domain.Services
+namespace Domain.Services
+{
+    public class UserService : IUserService
     {
-        public class UserService: IUserService
-        {
-            private readonly IUserRepository _userRepository;
-            private readonly IOtpService _otpService;
+        private readonly IUserRepository _userRepository;
+        private readonly IOtpService _otpService;
 
-            public UserService(IUserRepository userRepository, IOtpService otpService)
-            {
-                _userRepository = userRepository;
-                _otpService = otpService;
-            }
-            public async Task<bool> RegisterAsync(RegisterCommand command)
-            {
-                if (await _userRepository.PhoneNumberExistsAsync(command.PhoneNumber))
-                    throw new Exception("Phone Number Already Taken!");
-                if (!_otpService.ValidateOtp(command.PhoneNumber, command.OtpResponse))
-                    throw new Exception("Wrong Otp Response");
-                await _userRepository.CreateUserAsync(command);
-                return true;
-            }
+        public UserService(IUserRepository userRepository, IOtpService otpService)
+        {
+            _userRepository = userRepository;
+            _otpService = otpService;
+        }
+        public async Task<bool> RegisterAsync(RegisterCommand command)
+        {
+            if (await _userRepository.PhoneNumberExistsAsync(command.PhoneNumber))
+                throw new Exception("Phone Number Already Taken!");
+            if (!_otpService.ValidateOtp(command.PhoneNumber, command.OtpResponse))
+                throw new Exception("Wrong Otp Response");
+            await _userRepository.CreateUserAsync(command);
+            return true;
+        }
 
         public async Task<LoginResult> LoginAsync(LoginCommand command)
         {
@@ -63,20 +63,19 @@ using static Domain.Enums.EnumCollection;
             };
         }
 
-        public async Task ChangeWalletBalance(WalletFunction function, double Amount,int UserId)
+        public async Task ChangeWalletBalance(WalletFunction function, double Amount, int UserId)
         {
             var User = await _userRepository.GetUserAsync(UserId);
-            if (function==WalletFunction.Increase)
+            if (function == WalletFunction.Increase)
             {
-                User.WalletBalance=User.WalletBalance+Amount;
+                  User.WalletBalance += Amount;
             }
             else
             {
-                User.WalletBalance=User.WalletBalance-Amount;
+                User.WalletBalance -= Amount;
 
             }
-
-            
+            await _userRepository.UpdateWalletAsync(User);
         }
 
         public async Task<List<UserCurrentReservationDto>> GetUserCurrentReservationsAsync(int userId, Reservation.ReservationState reservationsState)
@@ -85,15 +84,15 @@ using static Domain.Enums.EnumCollection;
             var currentReservations = new List<UserCurrentReservationDto>();
             foreach (var item in reservations)
             {
-                 currentReservations.Add( new UserCurrentReservationDto
-                                                         {
-                                                             DaysNumber = item.Days.Count,
-                                                             SpaceName = item.Space.Name,
-                                                             SubmitDate = item.CreatedAt
-                                                         });
+                currentReservations.Add(new UserCurrentReservationDto
+                {
+                    DaysNumber = item.Days.Count,
+                    SpaceName = item.Space.Name,
+                    SubmitDate = item.CreatedAt
+                });
             }
 
             return currentReservations;
         }
     }
-    }
+}
