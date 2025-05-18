@@ -62,6 +62,23 @@ using static Domain.Enums.EnumCollection;
                 Gender = user.Gender
             };
         }
+
+        public async Task ChangeWalletBalance(WalletFunction function, double Amount,int UserId)
+        {
+            var User = await _userRepository.GetUserAsync(UserId);
+            if (function==WalletFunction.Increase)
+            {
+                User.WalletBalance=User.WalletBalance+Amount;
+            }
+            else
+            {
+                User.WalletBalance=User.WalletBalance-Amount;
+
+            }
+
+            
+        }
+
         public async Task<List<UserCurrentReservationDto>> GetUserCurrentReservationsAsync(int userId, Reservation.ReservationState reservationsState)
         {
             var reservations = await _userRepository.GetUserCurrentReservations(userId, reservationsState);

@@ -54,4 +54,12 @@ public class UserRepository: IUserRepository
             .Where(r => r.UserId == userId && r.State == reservationsState)
             .ToListAsync();    
     }
+
+    public async Task UpdateWalletAsync(User user)
+    {
+        _context.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
+    
 }

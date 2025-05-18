@@ -14,5 +14,10 @@ namespace Domain.Enums
             Succeeded,
             WrongOtp
         }
+        public enum WalletFunction
+        {
+            Increase,
+            Decrease
+        }
     }
 }

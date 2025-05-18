@@ -1,5 +1,7 @@
 ﻿using Domain.Command;
+using Domain.Enums;
 using Domain.Interfaces;
+using Domain.Models;
 using MediatR;
 
 namespace Domain.CommandHandlers;
@@ -8,11 +10,13 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
 {
     private readonly IReservationRepository _reservation;
     private readonly ISpaceRepository _spaceRepository;
+    private readonly IUserService _userService;
 
-    public AddReservationCommandHandler(IReservationRepository reservation, ISpaceRepository spaceRepository)
+    public AddReservationCommandHandler(IReservationRepository reservation, ISpaceRepository spaceRepository, IUserService userService)
     {
         _reservation = reservation;
         _spaceRepository = spaceRepository;
+        _userService = userService;
     }
 
 
@@ -29,7 +33,11 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
         if (CountOfFree<= request.NumberOfPeople)
             return "Not Free Chair";
 
-        await _reservation.AddReserve(request);
+        var Id= await _reservation.AddReserve(request);
+        await _userService.ChangeWalletBalance(EnumCollection.WalletFunction.Decrease, PriceToPay, request.UserId);
+        var ReservationDay = new ReservationDay(Id,DateOnly.FromDateTime(DateTime.Now));
+        ReservationDay.SpaceId = request.SpaceId;
+        await _reservation.AddReservatioDayAsync(ReservationDay);
         return "Reserved";
     }
 }

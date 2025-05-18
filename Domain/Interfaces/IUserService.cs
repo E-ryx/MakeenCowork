@@ -16,6 +16,7 @@ namespace Domain.Interfaces
         Task<bool> RegisterAsync(RegisterCommand command);
         Task<LoginResult> LoginAsync(LoginCommand command);
         Task<UserProfileDto> GetUserProfile(int id);
+        Task ChangeWalletBalance(WalletFunction function,double Amount,int UserId);
         Task<List<UserCurrentReservationDto>> GetUserCurrentReservationsAsync(int userId, Reservation.ReservationState reservationsState);
     }
 }

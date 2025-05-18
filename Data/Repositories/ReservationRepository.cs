@@ -21,13 +21,17 @@ public class ReservationRepository:IReservationRepository
         return await _context.Users.Where(a => a.Id == userid).Select(a => a.WalletBalance).FirstOrDefaultAsync();
     }
 
-    public async Task AddReserve(AddReservationCommand command)
+    public async Task<int> AddReserve(AddReservationCommand command)
     {
         var Reserv = new Reservation(command.UserId,command.SpaceId,command.TransactionId,command.NumberOfPeople,Reservation.ReservationStatus.Pending,command.ExtraServices, DateOnly.FromDateTime(DateTime.Now));
         await _context.AddAsync(Reserv);
         await _context.SaveChangesAsync();
+        return Reserv.ReservationId;
     }
 
- 
-
+    public async Task AddReservatioDayAsync(ReservationDay day)
+    {
+        await _context.ReservationDays.AddAsync(day);
+        await _context.SaveChangesAsync();
+    }
 }

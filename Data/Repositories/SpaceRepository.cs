@@ -30,7 +30,7 @@ public class SpaceRepository:ISpaceRepository
     public async Task<int> SpaceIsFreeAtDate(int SpaceId,DateOnly Date)
     {
 
-        var CountOfReservation = await _context.ReservationDays.CountAsync(a => a.SpaceId == SpaceId && a.Date == Date)-await _context.Spaces.Where(a=>a.SpaceId==SpaceId).Select(a=>a.Capacity).FirstOrDefaultAsync();
+        var CountOfReservation = await _context.Spaces.Where(a => a.SpaceId == SpaceId).Select(a => a.Capacity).FirstOrDefaultAsync()- await _context.ReservationDays.CountAsync(a => a.SpaceId == SpaceId && a.Date == Date);
 
         return CountOfReservation;
     }
