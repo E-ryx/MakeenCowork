@@ -14,6 +14,7 @@ public class User
     public GenderType? Gender { get; set; }
     public string PhoneNumber { get; set; }
     public double WalletBalance{ get; set; }
+    public ICollection<Reservation> Reservations{ get; set; }
     public enum GenderType
     {
         Male,

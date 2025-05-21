@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Domain.Command;
+using Domain.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace MakeenCo_Work.Controllers
             addReservationCommand.UserId = UserId;
             if (ModelState.IsValid)
             {
-               
+
                 return Ok(await _mediator.Send(addReservationCommand));
             }
 
@@ -48,6 +49,12 @@ namespace MakeenCo_Work.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllReservation([FromQuery]GetAllReservationCommand command)
+        {
+
+            return Ok(await _mediator.Send(command)) ;
+        }
 
     }
 }

@@ -1,5 +1,7 @@
-﻿using Data.Context;
+﻿using System.Formats.Asn1;
+using Data.Context;
 using Domain.Command;
+using Domain.DTOs;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -48,5 +50,35 @@ public class ReservationRepository : IReservationRepository
     public async Task<bool> AnyReservation(int id)
     {
         return await _context.Reservations.AnyAsync(a => a.ReservationId == id);
+    }
+
+    public async Task<IQueryable<Reservation>> GetAllReservation(GetAllReservationCommand command)
+    {
+        int CountToSkip = command.Page * 10;
+        var AllReservation = _context.Reservations.OrderBy(a => a.CreatedAt).Include(a=>a.User).AsQueryable();
+        if (command.DateOnly.HasValue)
+        {
+            AllReservation = AllReservation.Where(a => a.CreatedAt == command.DateOnly);
+        }
+
+        if (command.FullName!=null)
+        {
+            AllReservation= AllReservation.Where(a => EF.Functions.Like(a.User.Name, $"%{command.FullName}%")&& EF.Functions.Like(a.User.FamilyName, $"%{command.FullName}%"));
+        }
+        var list= AllReservation.Skip(CountToSkip).Take(10);
+        if (list.Count()==0)
+        {
+          return AllReservation.Take(10);
+        }
+        else
+        {
+          return  AllReservation.Skip(CountToSkip).Take(10);
+        }
+
+
+
+
+
+
     }
 }

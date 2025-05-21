@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models;
 public class Reservation
@@ -17,7 +18,9 @@ public class Reservation
     // Navigation Properties
     public Space Space { get; private set; }
     public List<ReservationDay> Days { get; private set; } = new();
-
+    [ForeignKey("UserId")]
+    public User User
+    { get; set; }
     private Reservation() { } // EF Core
 
     public Reservation(int userId, int spaceId, int transactionId, int numberOfPeople, ReservationStatus status, bool extraServices, DateOnly createdAt)
