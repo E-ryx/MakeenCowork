@@ -12,14 +12,10 @@ namespace MakeenCo_Work.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public ReservationsController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
-
-
         [HttpPost]
         public async Task<IActionResult> AddReserve(AddReservationCommand addReservationCommand)
         {
@@ -33,7 +29,6 @@ namespace MakeenCo_Work.Controllers
 
             return BadRequest();
         }
-
         [HttpDelete]
         public async Task<IActionResult> CancleReserve(CancelReserveCommand command)
         {
@@ -47,14 +42,11 @@ namespace MakeenCo_Work.Controllers
 
             return BadRequest();
         }
-
-
         [HttpGet]
         public async Task<IActionResult> GetAllReservation([FromQuery]GetAllReservationCommand command)
         {
 
             return Ok(await _mediator.Send(command)) ;
         }
-
     }
 }

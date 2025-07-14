@@ -33,7 +33,6 @@ namespace MakeenCo_Work.Controllers
 
             return Ok(user);
         }
-
         [HttpGet("reservations/current")]
         public async Task<IActionResult> GetUserCurrentReservations()
         {
@@ -61,7 +60,6 @@ namespace MakeenCo_Work.Controllers
                 return NotFound("Reservations not Found");
             return Ok(currentReservations);
         }
-        
         [HttpGet("reservations/{state}")]
         public async Task<IActionResult> GetUserReservations([FromQuery] Reservation.ReservationState state)
         {

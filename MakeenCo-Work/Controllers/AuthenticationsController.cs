@@ -21,7 +21,6 @@ namespace MakeenCo_Work.Controllers
             _mediator = mediator;
             _userRepository = userRepository;
         }
-
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterCommand command)
         {
@@ -30,14 +29,12 @@ namespace MakeenCo_Work.Controllers
                 return BadRequest("Register Failed");
             return Ok("User Successfully Registered.");
         }
-        
         [HttpPost("generate-captcha")]
         public async Task<IActionResult> GenerateCaptcha([FromBody] GenerateCaptchaCommand command)
         {
             var captchaCode = await _mediator.Send(command);
             return Ok(captchaCode);
         }
-
         [HttpGet("send-otp")]
         public async Task<IActionResult> GenerateOtp([FromQuery] SendOtpCommand command)
         {
@@ -63,15 +60,12 @@ namespace MakeenCo_Work.Controllers
             await HttpContext.SignInAsync(principal, new AuthenticationProperties());
             return Ok("User Logged In");
         }
-
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return Ok();
         }
-
-
     }
 
 }

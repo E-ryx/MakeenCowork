@@ -10,25 +10,20 @@ namespace MakeenCo_Work.Controllers
     public class SpaceController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public SpaceController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
-
         [HttpPost]
         public async Task<IActionResult> AddSpace(AddSpaceCommand command)
         {
-
             if (ModelState.IsValid)
             {
                 await _mediator.Send(command);
                 return Ok();
             }
-
+            
             return BadRequest();
         }
-
     }
 }
