@@ -1,5 +1,7 @@
+using Data;
 using Data.Context;
 using Data.Repositories;
+using Domain;
 using Domain.Command;
 using Domain.Interfaces;
 using Domain.Services;
@@ -12,15 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddScoped<ICaptchaService, CaptchaService>();
 //builder.Services.AddScoped<IMemoryService, MemoryService>();
 //builder.Services.AddScoped<IOtpService, OtpService>();
-// builder.Services.AddScoped<ISeeder, UserSeeder>();
+//builder.Services.AddScoped<ISeeder, UserSeeder>();
 
 // Memory cache services
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var configuration = builder.Configuration;
+builder.Services
+    .AddDataAccess(configuration)
+    .AddBusinessLogic();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -69,10 +74,10 @@ builder.Services.Scan(scan => scan
     .WithScopedLifetime());
 
 #region Config DataBase
-builder.Services.AddDbContext<MyDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CoWork"));
-});
+// builder.Services.AddDbContext<MyDbContext>(options =>
+// {
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("CoWork"));
+// });
 #endregion
 
 var app = builder.Build();

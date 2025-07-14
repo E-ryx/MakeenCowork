@@ -5,7 +5,8 @@ namespace Data.Context;
 
 public class MyDbContext:DbContext
 {
-    public MyDbContext(DbContextOptions<MyDbContext>options):base(options)
+    public MyDbContext(DbContextOptions<MyDbContext> options)
+        : base(options)
     {
         
     }
