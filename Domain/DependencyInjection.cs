@@ -1,3 +1,4 @@
+using Domain.Interfaces;
 using Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,12 +8,20 @@ namespace Domain;
     {
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
-            services.Scan(scan => scan
-                .FromAssemblyOf<UserService>() // or any type from this project
-                .AddClasses(classes => classes.InNamespaces("Domain.Services"))
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
 
+        services.Scan(scan => scan
+            .FromAssemblyOf<UserService>()
+            .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+            );
+
+        services.Scan(scan => scan
+            .FromAssemblyOf<IUserService>()
+            .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
             return services;
         }
     }

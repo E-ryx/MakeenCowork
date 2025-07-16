@@ -1,5 +1,6 @@
 using Data.Context;
 using Data.Repositories;
+using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +13,19 @@ public static class DependencyInjection
     {
         // Register EF Core with SQLite
         services.AddDbContext<MyDbContext>(options =>
-            options.UseSqlite(configuration.GetConnectionString("CoWork")));
+            options.UseSqlServer(configuration.GetConnectionString("CoWork")));
 
         // Register all repositories using Scrutor
         services.Scan(scan => scan
             .FromAssemblyOf<UserRepository>() // or typeof(IUserRepository)
-            .AddClasses(classes => classes.InNamespaces("Data.Repositories"))
+            .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+            );
+
+        services.Scan(scan => scan
+            .FromAssemblyOf<IUserRepository>() // or typeof(IUserRepository)
+            .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
             .AsImplementedInterfaces()
             .WithScopedLifetime()
         );

@@ -10,23 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddScoped<ICaptchaService, CaptchaService>();
-//builder.Services.AddScoped<IMemoryService, MemoryService>();
-//builder.Services.AddScoped<IOtpService, OtpService>();
-//builder.Services.AddScoped<ISeeder, UserSeeder>();
-
-// Memory cache services
-builder.Services.AddMemoryCache();
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var configuration = builder.Configuration;
-builder.Services
-    .AddDataAccess(configuration)
-    .AddBusinessLogic();
 
+// Cookie Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -49,36 +37,12 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(SendOtpCommand).Assembly));
 
-builder.Services.Scan(scan => scan
-    .FromAssemblyOf<IUserRepository>()
-    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
-    .AsImplementedInterfaces()
-    .WithScopedLifetime());
+// Dependency Injection file's
+builder.Services.AddDataAccess(builder.Configuration)
+    .AddBusinessLogic();
 
-builder.Services.Scan(scan => scan
-    .FromAssemblyOf<UserRepository>()
-    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
-    .AsImplementedInterfaces()
-    .WithScopedLifetime());
-
-builder.Services.Scan(scan => scan
-    .FromAssemblyOf<UserService>()
-    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
-    .AsImplementedInterfaces()
-    .WithScopedLifetime());
-
-builder.Services.Scan(scan => scan
-    .FromAssemblyOf<IUserService>()
-    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))
-    .AsImplementedInterfaces()
-    .WithScopedLifetime());
-
-#region Config DataBase
-// builder.Services.AddDbContext<MyDbContext>(options =>
-// {
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("CoWork"));
-// });
-#endregion
+// Memory cache services
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
