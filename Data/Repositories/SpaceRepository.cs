@@ -22,7 +22,7 @@ public class SpaceRepository:ISpaceRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<double> GetPriceOfSpace(int SpaceId)
+    public async Task<int> GetPriceOfSpace(int SpaceId)
     {
         return await _context.Spaces.Where(a => a.SpaceId == SpaceId).Select(a => a.Price).FirstOrDefaultAsync();
     }

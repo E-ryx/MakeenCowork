@@ -7,7 +7,7 @@ public class Space
     public int SpaceId { get; private set; }
     public string Name { get; private set; }
     public int Capacity { get; private set; }
-    public double Price { get; private set; }
+    public int Price { get; private set; }
     // public int? ImageId { get; private set; }
     public string ExtraServices { get; private set; }
 
