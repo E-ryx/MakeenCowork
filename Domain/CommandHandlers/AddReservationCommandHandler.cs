@@ -12,13 +12,19 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
     private readonly ISpaceRepository _spaceRepository;
     private readonly IUserService _userService;
     private readonly IUserRepository _userRepository;
+    private readonly ITransactionRepositroy _transactionRepositroy;
 
-    public AddReservationCommandHandler(IReservationRepository reservation, ISpaceRepository spaceRepository, IUserService userService, IUserRepository userRepository)
+    public AddReservationCommandHandler(IReservationRepository reservation,
+        ISpaceRepository spaceRepository,
+        IUserService userService,
+        IUserRepository userRepository,
+        ITransactionRepositroy transactionRepositroy)
     {
         _reservation = reservation;
         _spaceRepository = spaceRepository;
         _userService = userService;
         _userRepository = userRepository;
+        _transactionRepositroy = transactionRepositroy;
     }
 
     public async Task<string> Handle(AddReservationCommand request, CancellationToken cancellationToken)
@@ -36,9 +42,10 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
 
         var Id= await _reservation.AddReserve(request);
         await _userService.ChangeWalletBalance(EnumCollection.WalletFunction.Decrease, PriceToPay, request.UserId);
+        var transactionTrackingCode = await _transactionRepositroy.AddTransactionAsync(request.UserId, PriceToPay);
         var ReservationDay = new ReservationDay(Id,DateOnly.FromDateTime(DateTime.Now));
         ReservationDay.SpaceId = request.SpaceId;
         await _reservation.AddReservatioDayAsync(ReservationDay);
-        return "Reserved";
+        return $"Reserved - Transaction Tracking Code: {transactionTrackingCode}";
     }
 }

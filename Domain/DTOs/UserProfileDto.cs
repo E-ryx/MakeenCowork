@@ -18,5 +18,6 @@ namespace Domain.DTOs
     public string? ImgOfNationalCardUrl { get; set; }
     public GenderType? Gender { get; set; }
     public string PhoneNumber { get; set; }
+    public double WalletBalance { get; set; }
     }
 }

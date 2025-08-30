@@ -59,7 +59,8 @@ namespace Domain.Services
                 PhoneNumber = user.PhoneNumber,
                 Email = user.Email,
                 BirthDate = user.BirthDate,
-                Gender = user.Gender
+                Gender = user.Gender,
+                WalletBalance = user.WalletBalance
             };
         }
 
