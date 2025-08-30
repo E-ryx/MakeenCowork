@@ -15,6 +15,7 @@ public class User
     public string PhoneNumber { get; set; }
     public double WalletBalance{ get; set; }
     public ICollection<Reservation> Reservations{ get; set; }
+    public ICollection<Transaction> Transactions{ get; set; }
     public enum GenderType
     {
         Male,

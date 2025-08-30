@@ -112,7 +112,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
+                    b.Property<double>("Amount")
                         .HasColumnType("float");
 
                     b.HasKey("SpaceId");
