@@ -3,7 +3,7 @@ using Domain.DTOs;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Domain.CommandHandlers;
+namespace Domain.CommandHandlers.Reservation;
 
 public class GetAllReservationCommandHandler:IRequestHandler<GetAllReservationCommand,List<AllReservationDTO>>
 {

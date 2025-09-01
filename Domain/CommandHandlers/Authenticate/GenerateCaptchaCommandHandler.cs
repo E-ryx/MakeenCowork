@@ -2,7 +2,7 @@ using Domain.Command;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Domain.CommandHandlers;
+namespace Domain.CommandHandlers.Authenticate;
 
 public class GenerateCaptchaCommandHandler : IRequestHandler<GenerateCaptchaCommand, string>
 {

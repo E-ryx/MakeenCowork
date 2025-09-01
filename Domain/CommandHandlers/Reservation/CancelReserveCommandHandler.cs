@@ -3,7 +3,7 @@ using Domain.Enums;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Domain.CommandHandlers;
+namespace Domain.CommandHandlers.Reservation;
 
 public class CancelReserveCommandHandler : IRequestHandler<CancelReserveCommand>
 {

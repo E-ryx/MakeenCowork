@@ -4,7 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 
-namespace Domain.CommandHandlers;
+namespace Domain.CommandHandlers.Reservation;
 
 public class AddReservationCommandHandler : IRequestHandler<AddReservationCommand, string>
 {

@@ -8,7 +8,7 @@ using Domain.Interfaces;
 using MediatR;
 using static Domain.Enums.EnumCollection;
 
-namespace Domain.CommandHandlers
+namespace Domain.CommandHandlers.Authenticate
 {
     public class LoginCommandHandler: IRequestHandler<LoginCommand, LoginResult>
     {

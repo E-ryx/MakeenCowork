@@ -7,7 +7,7 @@ using Domain.Command;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Domain.CommandHandlers
+namespace Domain.CommandHandlers.Authenticate
 {
     public class RegisterCommandHandler: IRequestHandler<RegisterCommand, bool>
     {

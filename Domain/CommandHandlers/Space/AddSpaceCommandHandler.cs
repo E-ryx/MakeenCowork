@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using MediatR;
 
-namespace Domain.CommandHandlers;
+namespace Domain.CommandHandlers.Space;
 
 public class AddSpaceCommandHandler : IRequestHandler<AddSpaceCommand>
 {

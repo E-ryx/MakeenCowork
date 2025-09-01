@@ -8,7 +8,7 @@ using Domain.Interfaces;
 using Domain.Queries;
 using MediatR;
 
-namespace Domain.CommandHandlers
+namespace Domain.CommandHandlers.User
 {
     public class GetUserProfileHandler: IRequestHandler<GetProfileQuery, UserProfileDto>
     {
