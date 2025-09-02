@@ -42,7 +42,7 @@ public class AddReservationCommandHandler : IRequestHandler<AddReservationComman
 
         var Id= await _reservation.AddReserve(request);
         await _userService.ChangeWalletBalance(EnumCollection.WalletFunction.Decrease, PriceToPay, request.UserId);
-        var transactionTrackingCode = await _transactionRepositroy.AddTransactionAsync(request.UserId, PriceToPay);
+        var transactionTrackingCode = await _transactionRepositroy.AddReservationTransactionAsync(request.UserId, PriceToPay, EnumCollection.TransactionType.Decrease);
         var ReservationDay = new ReservationDay(Id,DateOnly.FromDateTime(DateTime.Now));
         ReservationDay.SpaceId = request.SpaceId;
         await _reservation.AddReservatioDayAsync(ReservationDay);

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Domain.Command;
 using Domain.Models;
 using Domain.Queries;
 using MediatR;
@@ -114,6 +115,59 @@ namespace MakeenCo_Work.Controllers
                 return NotFound();
             
             return Ok(walletBalance);
+        }
+        [HttpPost("wallets/add-balance")]
+        public async Task<IActionResult> AddUserWalletBalance()
+        {
+            
+            // Get the user's ID from the claims
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdString == null)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            // Parse the ID (if stored as a string)
+            if (!int.TryParse(userIdString, out var userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var command = new AddTransactionRequestCommand()
+            {
+                UserId = userId
+            };
+            
+            var result = await _mediator.Send(command);
+            
+            return Ok(result);
+        }
+
+        [HttpGet("transactions/history")]
+        public async Task<IActionResult> GetUserTransactionsHistory()
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdString == null)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            // Parse the ID (if stored as a string)
+            if (!int.TryParse(userIdString, out var userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var query = new GetUserTransactionsHistoryQuery()
+            {
+                UserId = userId
+            };
+
+            var transactionsHistory = _mediator.Send(query);
+            
+            return Ok(query);
         }
     }
 }

@@ -19,5 +19,18 @@ namespace Domain.Enums
             Increase,
             Decrease
         }
+
+        public enum TransactionType
+        {
+            Increase,
+            Decrease
+        }
+
+        public enum TransactionStatus
+        {
+            Declined,
+            Approved,
+            Pending
+        }
     }
 }
