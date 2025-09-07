@@ -16,4 +16,6 @@ public class MyDbContext:DbContext
     public DbSet<ReservationDay> ReservationDays { get; set; }
     public DbSet<Space> Spaces { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<TicketMessage> TicketMessages { get; set; }
 }

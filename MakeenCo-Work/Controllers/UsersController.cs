@@ -2,6 +2,7 @@
 using Domain.Command;
 using Domain.Models;
 using Domain.Queries;
+using Domain.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -168,6 +169,66 @@ namespace MakeenCo_Work.Controllers
             var transactionsHistory = _mediator.Send(query);
             
             return Ok(query);
+        }
+        
+        [HttpGet("tickets")]
+        public async Task<IActionResult> GetTickets()
+        { 
+            var userId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var tickets = await _mediator.Send(new GetUserTicketsQuery()
+            {
+                UserId = int.Parse(userId)
+            });
+            
+            return Ok(tickets);
+        }
+
+        [HttpPost("tickets/create")]
+        public async Task<IActionResult> CreateTicket()
+        {
+            var userId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            await _mediator.Send(new CreateTicketCommand()
+            {
+                UserId = int.Parse(userId)
+            });
+
+            return Ok("Ticket Created");
+        }
+        
+        [HttpGet("tickets/{ticketId:int}")]
+        public async Task<IActionResult> GetMessages(int ticketId)
+        {
+            var userId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var result = await _mediator.Send(new GetTicketMessagesQuery()
+            {
+                TicketId = ticketId,
+                UserId = int.Parse(userId)
+            });
+            
+            return Ok(result);
+        }
+        [HttpPost("tickets/{ticketId:int}")]
+        public async Task<IActionResult> AddMessage(
+            int ticketId, 
+            [FromBody] AddTicketMessageRequest request)
+        {
+            var userId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var command = new AddTicketMessageCommand()
+            {
+                Body = request.Body,
+                TicketId = ticketId,
+                UserId = int.Parse(userId)
+            };
+            var result = await _mediator.Send(command);
+
+            return CreatedAtAction(nameof(GetMessages), new { ticketId }, result);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Data;
 using Data.Context;
 using Data.Repositories;
@@ -6,6 +7,7 @@ using Domain.Command;
 using Domain.Interfaces;
 using Domain.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +45,8 @@ builder.Services.AddDataAccess(builder.Configuration)
 
 // Memory cache services
 builder.Services.AddMemoryCache();
+// SignalR
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -60,3 +64,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Map NameIdentifier to your user id claim
+public sealed class NameIdentifierUserIdProvider : IUserIdProvider
+{
+    public string? GetUserId(HubConnectionContext connection) =>
+        connection.User?.FindFirst("sub")?.Value
+        ?? connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+}
