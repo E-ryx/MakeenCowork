@@ -1,4 +1,4 @@
-# 🏢 Coworking Space Reservation API (ASP.NET Core Web API) – *Under Development*
+# 🏢 Coworking Space Reservation API (ASP.NET Core Web API)
 
 A scalable and modern **reservation system API** designed for coworking spaces. Built using **ASP.NET Core** with a clean 3-layer architecture, the project focuses on real-time support, secure session handling, and efficient request workflows.
 
